@@ -33,6 +33,7 @@ def get_profile_page_html(linkedin_id):
 
 def print_profile_in_markdown(profile_page_html):
     soup = bs(profile_page_html, 'html.parser')
+    markdown_indent = ' '*4
 
     def print_markdown_hr():
         print("")
@@ -43,7 +44,7 @@ def print_profile_in_markdown(profile_page_html):
         tag = soup.find(name, **attrs)
 
         try:
-            string = tag.string.strip()
+            string = html2text(tag.prettify()).strip()
         except AttributeError:
             return ''
         else:
@@ -67,18 +68,26 @@ def print_profile_in_markdown(profile_page_html):
 
     def print_headline():
         name = get_tag_string('h1', class_='fn', id='name')
-        extra_info = get_table_dict(class_='extra-info')
-
-        print("## {}".format(name))
+        print(name)
         print("")
+
+        extra_info = get_table_dict(class_='extra-info')
         for th, td in extra_info.items():
             print("+ {}".format(th))
             for d in map(str.strip, td.split('\n')):
                 if d.endswith(','):
                     d = d[:-1]
-                print("    {}".format(d))
+                print("{}{}".format(markdown_indent, d))
+
+    def print_summary():
+        summary = get_tag_string(
+            'section', class_='profile-section', id='summary'
+        )
+        print(summary)
 
     print_headline()
+    print_markdown_hr()
+    print_summary()
     print_markdown_hr()
 
 
@@ -86,9 +95,6 @@ def main():
     args = get_args()
     profile_page_html = get_profile_page_html(args.linkedin_id)
     print_profile_in_markdown(profile_page_html)
-
-    # with open('./tests/profile.html') as profile_page_html:
-        # print_profile_in_markdown(profile_page_html)
 
 if __name__ == "__main__":
     main()
