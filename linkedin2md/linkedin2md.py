@@ -264,6 +264,50 @@ def print_profile_in_markdown(profile_page_html):
             print("{}".format(description))
             print("")
 
+    def print_organizations():
+        organizations_tag = soup.find(
+            'section',
+            class_='profile-section',
+            id='organizations'
+        )
+        title = get_tag_string(
+            'h3',
+            parent_tag=organizations_tag,
+            class_='title',
+        )
+        print(title)
+        print("")
+
+        for organization_tag in organizations_tag.find_all('li'):
+            organization = get_tag_string(
+                'h4',
+                markdown=False,
+                parent_tag=organization_tag,
+                class_='item-title'
+            )
+            position = get_tag_string(
+                'h5',
+                markdown=False,
+                parent_tag=organization_tag,
+                class_='item-subtitle'
+            )
+            print("#### {} at {}  ".format(position, organization))
+
+            date_range = get_tag_string(
+                'span',
+                parent_tag=organization_tag,
+                class_='date-range',
+            )
+            print("{}  ".format(date_range))
+
+            description = get_tag_string(
+                'p',
+                parent_tag=organization_tag,
+                class_='description',
+            )
+            print("{}  ".format(description))
+            print("")
+
     print_headline()
     print_markdown_hr()
     print_summary()
@@ -277,6 +321,8 @@ def print_profile_in_markdown(profile_page_html):
     print_languages()
     print_markdown_hr()
     print_volunteering()
+    print_markdown_hr()
+    print_organizations()
     print_markdown_hr()
 
 
