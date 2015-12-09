@@ -40,11 +40,23 @@ def print_profile_in_markdown(profile_page_html):
         print("---")
         print("")
 
-    def get_tag_string(name, **attrs):
-        tag = soup.find(name, **attrs)
+    def get_tag_string(
+        name, markdown=True, parent_tag=None, child_tag_name=None, **attrs
+    ):
+
+        if parent_tag is None:
+            tag = soup.find(name, **attrs)
+        else:
+            tag = parent_tag.find(name, **attrs)
+
+        if child_tag_name:
+            tag = tag.find(child_tag_name)
 
         try:
-            string = html2text(tag.prettify()).strip()
+            if markdown:
+                string = html2text(tag.prettify()).strip()
+            else:
+                string = tag.string.strip()
         except AttributeError:
             return ''
         else:
@@ -85,9 +97,59 @@ def print_profile_in_markdown(profile_page_html):
         )
         print(summary)
 
+    def print_experience():
+        experience_tag = soup.find(
+            'section', class_='profile-section', id='experience'
+        )
+        title = get_tag_string('h3', parent_tag=experience_tag, class_='title')
+        print(title)
+        print("")
+
+        for position in experience_tag.find_all('li', class_='position'):
+            title = get_tag_string(
+                'h4',
+                markdown=False,
+                parent_tag=position,
+                child_tag_name='a',
+                class_='item-title'
+            )
+            print("+ {}".format(title))
+
+            company = get_tag_string(
+                'h5',
+                markdown=False,
+                parent_tag=position,
+                class_='item-subtitle'
+            )
+            location = get_tag_string(
+                'span',
+                parent_tag=position,
+                class_='location',
+            )
+            if location:
+                print("{}+ {}, {}".format(markdown_indent, company, location))
+            else:
+                print("{}+ {}".format(markdown_indent, company))
+
+            date_range = get_tag_string(
+                'span',
+                parent_tag=position,
+                class_='date-range',
+            )
+            print("{}+ {}".format(markdown_indent, date_range))
+
+            description = get_tag_string(
+                'p',
+                parent_tag=position,
+                class_='description',
+            )
+            print("{}+ {}".format(markdown_indent, description))
+
     print_headline()
     print_markdown_hr()
     print_summary()
+    print_markdown_hr()
+    print_experience()
     print_markdown_hr()
 
 
