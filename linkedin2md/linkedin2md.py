@@ -195,6 +195,29 @@ def print_profile_in_markdown(profile_page_html):
             if not any(c in ('see-more', 'see-less') for c in skill['class']):
                 print("+ {}".format(skill.get_text().strip()))
 
+    def print_languages():
+        languages_tag = soup.find(
+            'section', markdown=False, class_='profile-section', id='languages'
+        )
+        title = get_tag_string('h3', parent_tag=languages_tag, class_='title')
+        print(title)
+        print("")
+
+        for language_tag in languages_tag.find_all('li', class_='language'):
+            language = get_tag_string(
+                'h4',
+                markdown=False,
+                parent_tag=language_tag,
+                class_='name',
+            )
+            proficiency = get_tag_string(
+                'p',
+                markdown=False,
+                parent_tag=language_tag,
+                class_='proficiency',
+            )
+            print("+ {}: {}".format(language, proficiency))
+
     print_headline()
     print_markdown_hr()
     print_summary()
@@ -204,6 +227,8 @@ def print_profile_in_markdown(profile_page_html):
     print_education()
     print_markdown_hr()
     print_skills()
+    print_markdown_hr()
+    print_languages()
     print_markdown_hr()
 
 
