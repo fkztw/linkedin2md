@@ -56,7 +56,7 @@ def print_profile_in_markdown(profile_page_html):
             if markdown:
                 string = html2text(tag.prettify()).strip()
             else:
-                string = tag.string.strip()
+                string = tag.get_text().strip()
         except AttributeError:
             return ''
         else:
@@ -145,11 +145,48 @@ def print_profile_in_markdown(profile_page_html):
             )
             print("{}+ {}".format(markdown_indent, description))
 
+    def print_education():
+        education_tag = soup.find(
+            'section', class_='profile-section', id='education'
+        )
+
+        title = get_tag_string('h3', parent_tag=education_tag, class_='title')
+        print(title)
+        print("")
+
+        for school in education_tag.find_all('li', class_='school'):
+            school_name = get_tag_string(
+                'h4',
+                markdown=False,
+                parent_tag=school,
+                class_='item-title'
+            )
+            date_range = get_tag_string(
+                'span',
+                parent_tag=school,
+                class_='date-range',
+            )
+            print("+ {} ({})".format(school_name, date_range))
+
+            degree = get_tag_string(
+                'h5',
+                markdown=False,
+                parent_tag=school,
+                class_='item-subtitle'
+            )
+            print("{}+ {}".format(markdown_indent, degree))
+
+            description_tag = school.find('div', class_='description')
+            for description in description_tag.stripped_strings:
+                print("{}+ {}".format(markdown_indent, description))
+
     print_headline()
     print_markdown_hr()
     print_summary()
     print_markdown_hr()
     print_experience()
+    print_markdown_hr()
+    print_education()
     print_markdown_hr()
 
 
