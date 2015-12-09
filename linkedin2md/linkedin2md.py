@@ -184,7 +184,7 @@ def print_profile_in_markdown(profile_page_html):
 
     def print_skills():
         skills_tag = soup.find(
-            'section', markdown=False, class_='profile-section', id='skills'
+            'section', class_='profile-section', id='skills'
         )
 
         title = get_tag_string('h3', parent_tag=skills_tag, class_='title')
@@ -197,7 +197,7 @@ def print_profile_in_markdown(profile_page_html):
 
     def print_languages():
         languages_tag = soup.find(
-            'section', markdown=False, class_='profile-section', id='languages'
+            'section', class_='profile-section', id='languages'
         )
         title = get_tag_string('h3', parent_tag=languages_tag, class_='title')
         print(title)
@@ -218,6 +218,52 @@ def print_profile_in_markdown(profile_page_html):
             )
             print("+ {}: {}".format(language, proficiency))
 
+    def print_volunteering():
+        # Ignore Causes part
+
+        volunteering_tag = soup.find(
+            'section',
+            class_='profile-section',
+            id='volunteering'
+        )
+        title = get_tag_string(
+            'h3',
+            parent_tag=volunteering_tag,
+            class_='title',
+        )
+        print(title)
+        print("")
+
+        for position in volunteering_tag.find_all('li', class_='position'):
+            title = get_tag_string(
+                'h4',
+                markdown=False,
+                parent_tag=position,
+                class_='item-title'
+            )
+            organization = get_tag_string(
+                'h5',
+                markdown=False,
+                parent_tag=position,
+                class_='item-subtitle'
+            )
+            print("#### {} at {}".format(title, organization))
+
+            date_range = get_tag_string(
+                'span',
+                parent_tag=position,
+                class_='date-range',
+            )
+            print("{}".format(date_range))
+
+            description = get_tag_string(
+                'p',
+                parent_tag=position,
+                class_='description',
+            )
+            print("{}".format(description))
+            print("")
+
     print_headline()
     print_markdown_hr()
     print_summary()
@@ -229,6 +275,8 @@ def print_profile_in_markdown(profile_page_html):
     print_skills()
     print_markdown_hr()
     print_languages()
+    print_markdown_hr()
+    print_volunteering()
     print_markdown_hr()
 
 
