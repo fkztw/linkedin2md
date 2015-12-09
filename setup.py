@@ -8,7 +8,7 @@ import linkedin2md
 setup(
     packages=find_packages(exclude=["linkedin2md.bin"]),
     scripts=["linkedin2md/bin/linkedin2md"],
-    install_requires=['dryscrape', 'beautifulsoup4'],
+    install_requires=['dryscrape', 'beautifulsoup4', 'html2text'],
     name="linkedin2md",
     version=linkedin2md.__version__,
     author="Shun-Yi Jheng",
