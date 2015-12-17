@@ -1,5 +1,3 @@
-import re
-
 from argparse import ArgumentParser
 from collections import OrderedDict
 
@@ -191,9 +189,11 @@ def print_profile_in_markdown(profile_page_html):
         print(title)
         print("")
 
-        for skill in skills_tag.find_all('li', class_=re.compile(r"^skill$")):
-            if not any(c in ('see-more', 'see-less') for c in skill['class']):
-                print("+ {}".format(skill.get_text().strip()))
+        for skill in skills_tag.find_all('li', class_='skill'):
+            if all(c not in ('see-more', 'see-less') for c in skill['class']):
+                name = get_tag_string(None, markdown=False, parent_tag=skill)
+                print("+ {}".format(name))
+                # print("+ {}".format(skill.get_text().strip()))
 
     def print_languages():
         languages_tag = soup.find(
