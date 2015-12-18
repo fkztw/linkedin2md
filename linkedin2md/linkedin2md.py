@@ -331,7 +331,9 @@ def print_profile_in_markdown(profile_page_html):
         print(title)
         print("")
 
-        for publication_tag in publications_tag.find_all('li', class_='publication'):
+        for publication_tag in publications_tag.find_all(
+            'li', class_='publication'
+        ):
             publication = get_tag_string(
                 'h4',
                 markdown=False,
@@ -407,6 +409,46 @@ def print_profile_in_markdown(profile_page_html):
             print("{}  ".format(description))
             print("")
 
+    def print_projects():
+        projects_tag = soup.find(
+            'section',
+            class_='profile-section',
+            id='projects'
+        )
+        title = get_tag_string(
+            'h3',
+            parent_tag=projects_tag,
+            class_='title',
+        )
+        print(title)
+        print("")
+
+        for project_tag in projects_tag.find_all('li', class_='project'):
+            project = get_tag_string(
+                'h4',
+                markdown=False,
+                parent_tag=project_tag,
+                class_='item-title'
+            )
+            url = project_tag.find('a', class_='external-link').get('href')
+            url = get_real_url(url)
+            print("#### [{}]({})".format(project, url))
+
+            date_range = get_tag_string(
+                'span',
+                parent_tag=project_tag,
+                class_='date-range',
+            )
+            print("{}  ".format(date_range))
+
+            description = get_tag_string(
+                'p',
+                parent_tag=project_tag,
+                class_='description',
+            )
+            print("{}  ".format(description))
+            print("")
+
     print_headline()
     print_markdown_hr()
     print_summary()
@@ -426,6 +468,8 @@ def print_profile_in_markdown(profile_page_html):
     print_publications()
     print_markdown_hr()
     print_awards()
+    print_markdown_hr()
+    print_projects()
     print_markdown_hr()
 
 
