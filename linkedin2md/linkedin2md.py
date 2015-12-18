@@ -449,6 +449,51 @@ def print_profile_in_markdown(profile_page_html):
             print("{}  ".format(description))
             print("")
 
+    def print_scores():
+        scores_tag = soup.find(
+            'section',
+            class_='profile-section',
+            id='scores'
+        )
+        title = get_tag_string(
+            'h3',
+            parent_tag=scores_tag,
+            class_='title',
+        )
+        print(title)
+        print("")
+
+        for score_tag in scores_tag.find_all('li', class_='score'):
+            name = get_tag_string(
+                'h4',
+                markdown=False,
+                parent_tag=score_tag,
+                class_='item-title'
+            )
+            date_range = get_tag_string(
+                'span',
+                parent_tag=score_tag,
+                class_='date-range',
+            )
+            print("#### {} at {}".format(name, date_range))
+
+            score = get_tag_string(
+                'h5',
+                markdown=False,
+                parent_tag=score_tag,
+                class_='item-subtitle'
+            )
+            print("+ {}".format(score))
+
+            description = get_tag_string(
+                'p',
+                parent_tag=score_tag,
+                class_='description',
+            )
+            if description:
+                print("+ {}".format(description))
+            print("")
+
     print_headline()
     print_markdown_hr()
     print_summary()
@@ -470,6 +515,8 @@ def print_profile_in_markdown(profile_page_html):
     print_awards()
     print_markdown_hr()
     print_projects()
+    print_markdown_hr()
+    print_scores()
     print_markdown_hr()
 
 
