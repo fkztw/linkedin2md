@@ -3,7 +3,6 @@ from collections import OrderedDict
 
 import dryscrape
 import lxml.html
-
 from bs4 import BeautifulSoup as bs
 from html2text import html2text
 
@@ -28,7 +27,17 @@ def get_profile_page_html(linkedin_id):
     session.visit(linkedin_id)
     profile_page_html = lxml.html.tostring(session.document())
 
+    del session
     return profile_page_html
+
+
+def get_real_url(url):
+    session = dryscrape.Session()
+    session.visit(url)
+    real_url = session.url()
+
+    del session
+    return real_url
 
 
 def print_profile_in_markdown(profile_page_html):
@@ -308,6 +317,52 @@ def print_profile_in_markdown(profile_page_html):
             print("{}  ".format(description))
             print("")
 
+    def print_publications():
+        publications_tag = soup.find(
+            'section',
+            class_='profile-section',
+            id='publications'
+        )
+        title = get_tag_string(
+            'h3',
+            parent_tag=publications_tag,
+            class_='title',
+        )
+        print(title)
+        print("")
+
+        for publication_tag in publications_tag.find_all('li', class_='publication'):
+            publication = get_tag_string(
+                'h4',
+                markdown=False,
+                parent_tag=publication_tag,
+                class_='item-title'
+            )
+            url = publication_tag.find('a', class_='external-link').get('href')
+            url = get_real_url(url)
+            publisher = get_tag_string(
+                'h5',
+                markdown=False,
+                parent_tag=publication_tag,
+                class_='item-subtitle'
+            )
+            print("#### [{}]({}) on {}  ".format(publication, url, publisher))
+
+            date_range = get_tag_string(
+                'span',
+                parent_tag=publication_tag,
+                class_='date-range',
+            )
+            print("{}  ".format(date_range))
+
+            description = get_tag_string(
+                'p',
+                parent_tag=publication_tag,
+                class_='description',
+            )
+            print("{}  ".format(description))
+            print("")
+
     print_headline()
     print_markdown_hr()
     print_summary()
@@ -323,6 +378,8 @@ def print_profile_in_markdown(profile_page_html):
     print_volunteering()
     print_markdown_hr()
     print_organizations()
+    print_markdown_hr()
+    print_publications()
     print_markdown_hr()
 
 
