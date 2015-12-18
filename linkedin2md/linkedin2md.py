@@ -346,7 +346,7 @@ def print_profile_in_markdown(profile_page_html):
                 parent_tag=publication_tag,
                 class_='item-subtitle'
             )
-            print("#### [{}]({}) on {}  ".format(publication, url, publisher))
+            print("#### [{}]({}) on {}".format(publication, url, publisher))
 
             date_range = get_tag_string(
                 'span',
@@ -358,6 +358,50 @@ def print_profile_in_markdown(profile_page_html):
             description = get_tag_string(
                 'p',
                 parent_tag=publication_tag,
+                class_='description',
+            )
+            print("{}  ".format(description))
+            print("")
+
+    def print_awards():
+        awards_tag = soup.find(
+            'section',
+            class_='profile-section',
+            id='awards'
+        )
+        title = get_tag_string(
+            'h3',
+            parent_tag=awards_tag,
+            class_='title',
+        )
+        print(title)
+        print("")
+
+        for award_tag in awards_tag.find_all('li', class_='award'):
+            award = get_tag_string(
+                'h4',
+                markdown=False,
+                parent_tag=award_tag,
+                class_='item-title'
+            )
+            print("#### {}".format(award))
+
+            issuer = get_tag_string(
+                'h5',
+                markdown=False,
+                parent_tag=award_tag,
+                class_='item-subtitle'
+            )
+            date_range = get_tag_string(
+                'span',
+                parent_tag=award_tag,
+                class_='date-range',
+            )
+            print("Held by {} at {}  ".format(issuer, date_range))
+
+            description = get_tag_string(
+                'p',
+                parent_tag=award_tag,
                 class_='description',
             )
             print("{}  ".format(description))
@@ -380,6 +424,8 @@ def print_profile_in_markdown(profile_page_html):
     print_organizations()
     print_markdown_hr()
     print_publications()
+    print_markdown_hr()
+    print_awards()
     print_markdown_hr()
 
 
