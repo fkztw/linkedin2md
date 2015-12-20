@@ -23,12 +23,15 @@ def get_args():
 
 
 def get_profile_page_html(linkedin_id):
-    session = dryscrape.Session(base_url="https://www.linkedin.com/in/")
-    session.visit(linkedin_id)
-    profile_page_html = lxml.html.tostring(session.document())
+    profile_page_html = None
 
-    del session
-    return profile_page_html
+    while not profile_page_html:
+        session = dryscrape.Session(base_url="https://www.linkedin.com/in/")
+        session.visit(linkedin_id)
+        profile_page_html = lxml.html.tostring(session.document())
+    else:
+        del session
+        return profile_page_html
 
 
 def get_real_url(url):
