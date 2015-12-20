@@ -44,77 +44,6 @@ def print_profile_in_markdown(profile_page_html):
     soup = bs(profile_page_html, 'html.parser')
     markdown_indent = ' '*4
 
-    def print_section(tag, sub_tag_class):
-        title = get_tag_string(
-            'h3',
-            parent_tag=tag,
-            class_='title',
-        )
-        print(title)
-        print("")
-
-        item_tags = tag.find_all('li', class_=sub_tag_class)
-
-        if item_tags:
-            for item_tag in item_tags:
-                item_title = get_tag_string(
-                    'h4',
-                    markdown=False,
-                    parent_tag=item_tag,
-                )
-                url = item_tag.find('a', class_='external-link')
-                if url:
-                    url = url.get('href')
-                    url = get_real_url(url)
-
-                if item_title and url:
-                    print("#### [{}]({})".format(item_title, url))
-                elif item_title:
-                    print("#### {}".format(item_title))
-
-                item_subtitle = get_tag_string(
-                    'h5',
-                    markdown=False,
-                    parent_tag=item_tag,
-                    class_='item-subtitle'
-                )
-                if item_subtitle:
-                    print("+ {}".format(item_subtitle))
-
-                date_range = get_tag_string(
-                    'span',
-                    parent_tag=item_tag,
-                    class_='date-range',
-                )
-                if date_range:
-                    print("+ {}".format(date_range))
-
-                description = get_tag_string(
-                    'p',
-                    parent_tag=item_tag,
-                )
-                if description:
-                    print(description)
-
-                skill = get_tag_string(
-                    'span',
-                    parent_tag=item_tag,
-                    class_='wrap',
-                )
-                if skill:
-                    print("+ {}".format(skill))
-
-                if item_title:
-                    print("")
-
-        else:
-            description = get_tag_string(
-                'p',
-                parent_tag=tag,
-            )
-            if description:
-                print(description)
-
     def print_markdown_hr():
         print("")
         print("---")
@@ -170,6 +99,79 @@ def print_profile_in_markdown(profile_page_html):
                 if d.endswith(','):
                     d = d[:-1]
                 print("{}{}".format(markdown_indent, d))
+
+    def print_section(tag, sub_tag_class):
+        title = get_tag_string(
+            'h3',
+            parent_tag=tag,
+            class_='title',
+        )
+        print(title)
+        print("")
+
+        item_tags = tag.find_all('li', class_=sub_tag_class)
+
+        if item_tags:
+            for item_tag in item_tags:
+                item_title = get_tag_string(
+                    'h4',
+                    markdown=False,
+                    parent_tag=item_tag,
+                )
+                url = item_tag.find('a', class_='external-link')
+                if url:
+                    url = url.get('href')
+                    url = get_real_url(url)
+
+                if item_title and url:
+                    print("#### [{}]({})".format(item_title, url))
+                elif item_title:
+                    print("#### {}".format(item_title))
+
+                item_subtitle = get_tag_string(
+                    'h5',
+                    markdown=False,
+                    parent_tag=item_tag,
+                    class_='item-subtitle'
+                )
+                if item_subtitle:
+                    print("+ {}".format(item_subtitle))
+
+                date_range = get_tag_string(
+                    'span',
+                    parent_tag=item_tag,
+                    class_='date-range',
+                )
+                if date_range:
+                    print("+ {}".format(date_range))
+
+                description = get_tag_string(
+                    'p',
+                    parent_tag=item_tag,
+                )
+                if description:
+                    print("")
+                    print("{}  ".format(description.replace('\n', '  \n')))
+
+                skill = get_tag_string(
+                    'span',
+                    parent_tag=item_tag,
+                    class_='wrap',
+                )
+                if skill:
+                    print("+ {}".format(skill))
+
+                if item_title:
+                    print("")
+
+        else:
+            description = get_tag_string(
+                'p',
+                parent_tag=tag,
+            )
+            if description:
+                print("")
+                print("{}  ".format(description.replace('\n', '  \n')))
 
     print_headline()
     print_markdown_hr()
