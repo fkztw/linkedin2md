@@ -44,6 +44,77 @@ def print_profile_in_markdown(profile_page_html):
     soup = bs(profile_page_html, 'html.parser')
     markdown_indent = ' '*4
 
+    def print_section(tag, sub_tag_class):
+        title = get_tag_string(
+            'h3',
+            parent_tag=tag,
+            class_='title',
+        )
+        print(title)
+        print("")
+
+        item_tags = tag.find_all('li', class_=sub_tag_class)
+
+        if item_tags:
+            for item_tag in item_tags:
+                item_title = get_tag_string(
+                    'h4',
+                    markdown=False,
+                    parent_tag=item_tag,
+                )
+                url = item_tag.find('a', class_='external-link')
+                if url:
+                    url = url.get('href')
+                    url = get_real_url(url)
+
+                if item_title and url:
+                    print("#### [{}]({})".format(item_title, url))
+                elif item_title:
+                    print("#### {}".format(item_title))
+
+                item_subtitle = get_tag_string(
+                    'h5',
+                    markdown=False,
+                    parent_tag=item_tag,
+                    class_='item-subtitle'
+                )
+                if item_subtitle:
+                    print("+ {}".format(item_subtitle))
+
+                date_range = get_tag_string(
+                    'span',
+                    parent_tag=item_tag,
+                    class_='date-range',
+                )
+                if date_range:
+                    print("+ {}".format(date_range))
+
+                description = get_tag_string(
+                    'p',
+                    parent_tag=item_tag,
+                )
+                if description:
+                    print(description)
+
+                skill = get_tag_string(
+                    'span',
+                    parent_tag=item_tag,
+                    class_='wrap',
+                )
+                if skill:
+                    print("+ {}".format(skill))
+
+                if item_title:
+                    print("")
+
+        else:
+            description = get_tag_string(
+                'p',
+                parent_tag=tag,
+            )
+            if description:
+                print(description)
+
     def print_markdown_hr():
         print("")
         print("---")
@@ -100,424 +171,30 @@ def print_profile_in_markdown(profile_page_html):
                     d = d[:-1]
                 print("{}{}".format(markdown_indent, d))
 
-    def print_summary():
-        summary = get_tag_string(
-            'section', class_='profile-section', id='summary'
-        )
-        print(summary)
-
-    def print_experience():
-        experience_tag = soup.find(
-            'section', class_='profile-section', id='experience'
-        )
-        title = get_tag_string('h3', parent_tag=experience_tag, class_='title')
-        print(title)
-        print("")
-
-        for position in experience_tag.find_all('li', class_='position'):
-            title = get_tag_string(
-                'h4',
-                markdown=False,
-                parent_tag=position,
-                child_tag_name='a',
-                class_='item-title'
-            )
-            print("+ {}".format(title))
-
-            company = get_tag_string(
-                'h5',
-                markdown=False,
-                parent_tag=position,
-                class_='item-subtitle'
-            )
-            location = get_tag_string(
-                'span',
-                parent_tag=position,
-                class_='location',
-            )
-            if location:
-                print("{}+ {}, {}".format(markdown_indent, company, location))
-            else:
-                print("{}+ {}".format(markdown_indent, company))
-
-            date_range = get_tag_string(
-                'span',
-                parent_tag=position,
-                class_='date-range',
-            )
-            print("{}+ {}".format(markdown_indent, date_range))
-
-            description = get_tag_string(
-                'p',
-                parent_tag=position,
-                class_='description',
-            )
-            print("{}+ {}".format(markdown_indent, description))
-
-    def print_education():
-        education_tag = soup.find(
-            'section', class_='profile-section', id='education'
-        )
-
-        title = get_tag_string('h3', parent_tag=education_tag, class_='title')
-        print(title)
-        print("")
-
-        for school in education_tag.find_all('li', class_='school'):
-            school_name = get_tag_string(
-                'h4',
-                markdown=False,
-                parent_tag=school,
-                class_='item-title'
-            )
-            date_range = get_tag_string(
-                'span',
-                parent_tag=school,
-                class_='date-range',
-            )
-            print("+ {} ({})".format(school_name, date_range))
-
-            degree = get_tag_string(
-                'h5',
-                markdown=False,
-                parent_tag=school,
-                class_='item-subtitle'
-            )
-            print("{}+ {}".format(markdown_indent, degree))
-
-            description_tag = school.find('div', class_='description')
-            for description in description_tag.stripped_strings:
-                print("{}+ {}".format(markdown_indent, description))
-
-    def print_skills():
-        skills_tag = soup.find(
-            'section', class_='profile-section', id='skills'
-        )
-
-        title = get_tag_string('h3', parent_tag=skills_tag, class_='title')
-        print(title)
-        print("")
-
-        for skill in skills_tag.find_all('li', class_='skill'):
-            if all(c not in ('see-more', 'see-less') for c in skill['class']):
-                name = get_tag_string(None, markdown=False, parent_tag=skill)
-                print("+ {}".format(name))
-                # print("+ {}".format(skill.get_text().strip()))
-
-    def print_languages():
-        languages_tag = soup.find(
-            'section', class_='profile-section', id='languages'
-        )
-        title = get_tag_string('h3', parent_tag=languages_tag, class_='title')
-        print(title)
-        print("")
-
-        for language_tag in languages_tag.find_all('li', class_='language'):
-            language = get_tag_string(
-                'h4',
-                markdown=False,
-                parent_tag=language_tag,
-                class_='name',
-            )
-            proficiency = get_tag_string(
-                'p',
-                markdown=False,
-                parent_tag=language_tag,
-                class_='proficiency',
-            )
-            print("+ {}: {}".format(language, proficiency))
-
-    def print_volunteering():
-        # Ignore Causes part
-
-        volunteering_tag = soup.find(
-            'section',
-            class_='profile-section',
-            id='volunteering'
-        )
-        title = get_tag_string(
-            'h3',
-            parent_tag=volunteering_tag,
-            class_='title',
-        )
-        print(title)
-        print("")
-
-        for position in volunteering_tag.find_all('li', class_='position'):
-            title = get_tag_string(
-                'h4',
-                markdown=False,
-                parent_tag=position,
-                class_='item-title'
-            )
-            organization = get_tag_string(
-                'h5',
-                markdown=False,
-                parent_tag=position,
-                class_='item-subtitle'
-            )
-            print("#### {} at {}".format(title, organization))
-
-            date_range = get_tag_string(
-                'span',
-                parent_tag=position,
-                class_='date-range',
-            )
-            print("{}".format(date_range))
-
-            description = get_tag_string(
-                'p',
-                parent_tag=position,
-                class_='description',
-            )
-            print("{}".format(description))
-            print("")
-
-    def print_organizations():
-        organizations_tag = soup.find(
-            'section',
-            class_='profile-section',
-            id='organizations'
-        )
-        title = get_tag_string(
-            'h3',
-            parent_tag=organizations_tag,
-            class_='title',
-        )
-        print(title)
-        print("")
-
-        for organization_tag in organizations_tag.find_all('li'):
-            organization = get_tag_string(
-                'h4',
-                markdown=False,
-                parent_tag=organization_tag,
-                class_='item-title'
-            )
-            position = get_tag_string(
-                'h5',
-                markdown=False,
-                parent_tag=organization_tag,
-                class_='item-subtitle'
-            )
-            print("#### {} at {}  ".format(position, organization))
-
-            date_range = get_tag_string(
-                'span',
-                parent_tag=organization_tag,
-                class_='date-range',
-            )
-            print("{}  ".format(date_range))
-
-            description = get_tag_string(
-                'p',
-                parent_tag=organization_tag,
-                class_='description',
-            )
-            print("{}  ".format(description))
-            print("")
-
-    def print_publications():
-        publications_tag = soup.find(
-            'section',
-            class_='profile-section',
-            id='publications'
-        )
-        title = get_tag_string(
-            'h3',
-            parent_tag=publications_tag,
-            class_='title',
-        )
-        print(title)
-        print("")
-
-        for publication_tag in publications_tag.find_all(
-            'li', class_='publication'
-        ):
-            publication = get_tag_string(
-                'h4',
-                markdown=False,
-                parent_tag=publication_tag,
-                class_='item-title'
-            )
-            url = publication_tag.find('a', class_='external-link').get('href')
-            url = get_real_url(url)
-            publisher = get_tag_string(
-                'h5',
-                markdown=False,
-                parent_tag=publication_tag,
-                class_='item-subtitle'
-            )
-            print("#### [{}]({}) on {}".format(publication, url, publisher))
-
-            date_range = get_tag_string(
-                'span',
-                parent_tag=publication_tag,
-                class_='date-range',
-            )
-            print("{}  ".format(date_range))
-
-            description = get_tag_string(
-                'p',
-                parent_tag=publication_tag,
-                class_='description',
-            )
-            print("{}  ".format(description))
-            print("")
-
-    def print_awards():
-        awards_tag = soup.find(
-            'section',
-            class_='profile-section',
-            id='awards'
-        )
-        title = get_tag_string(
-            'h3',
-            parent_tag=awards_tag,
-            class_='title',
-        )
-        print(title)
-        print("")
-
-        for award_tag in awards_tag.find_all('li', class_='award'):
-            award = get_tag_string(
-                'h4',
-                markdown=False,
-                parent_tag=award_tag,
-                class_='item-title'
-            )
-            print("#### {}".format(award))
-
-            issuer = get_tag_string(
-                'h5',
-                markdown=False,
-                parent_tag=award_tag,
-                class_='item-subtitle'
-            )
-            date_range = get_tag_string(
-                'span',
-                parent_tag=award_tag,
-                class_='date-range',
-            )
-            print("Held by {} at {}  ".format(issuer, date_range))
-
-            description = get_tag_string(
-                'p',
-                parent_tag=award_tag,
-                class_='description',
-            )
-            print("{}  ".format(description))
-            print("")
-
-    def print_projects():
-        projects_tag = soup.find(
-            'section',
-            class_='profile-section',
-            id='projects'
-        )
-        title = get_tag_string(
-            'h3',
-            parent_tag=projects_tag,
-            class_='title',
-        )
-        print(title)
-        print("")
-
-        for project_tag in projects_tag.find_all('li', class_='project'):
-            project = get_tag_string(
-                'h4',
-                markdown=False,
-                parent_tag=project_tag,
-                class_='item-title'
-            )
-            url = project_tag.find('a', class_='external-link').get('href')
-            url = get_real_url(url)
-            print("#### [{}]({})".format(project, url))
-
-            date_range = get_tag_string(
-                'span',
-                parent_tag=project_tag,
-                class_='date-range',
-            )
-            print("{}  ".format(date_range))
-
-            description = get_tag_string(
-                'p',
-                parent_tag=project_tag,
-                class_='description',
-            )
-            print("{}  ".format(description))
-            print("")
-
-    def print_scores():
-        scores_tag = soup.find(
-            'section',
-            class_='profile-section',
-            id='scores'
-        )
-        title = get_tag_string(
-            'h3',
-            parent_tag=scores_tag,
-            class_='title',
-        )
-        print(title)
-        print("")
-
-        for score_tag in scores_tag.find_all('li', class_='score'):
-            name = get_tag_string(
-                'h4',
-                markdown=False,
-                parent_tag=score_tag,
-                class_='item-title'
-            )
-            date_range = get_tag_string(
-                'span',
-                parent_tag=score_tag,
-                class_='date-range',
-            )
-            print("#### {} at {}".format(name, date_range))
-
-            score = get_tag_string(
-                'h5',
-                markdown=False,
-                parent_tag=score_tag,
-                class_='item-subtitle'
-            )
-            print("+ {}".format(score))
-
-            description = get_tag_string(
-                'p',
-                parent_tag=score_tag,
-                class_='description',
-            )
-            if description:
-                print("+ {}".format(description))
-            print("")
-
     print_headline()
     print_markdown_hr()
-    print_summary()
-    print_markdown_hr()
-    print_experience()
-    print_markdown_hr()
-    print_education()
-    print_markdown_hr()
-    print_skills()
-    print_markdown_hr()
-    print_languages()
-    print_markdown_hr()
-    print_volunteering()
-    print_markdown_hr()
-    print_organizations()
-    print_markdown_hr()
-    print_publications()
-    print_markdown_hr()
-    print_awards()
-    print_markdown_hr()
-    print_projects()
-    print_markdown_hr()
-    print_scores()
-    print_markdown_hr()
+    sections = (
+        # ('topcard', ''),
+        ('summary', ''),
+        ('experience', 'position'),
+        ('education', 'school'),
+        ('skills', 'skill'),
+        ('languages', 'language'),
+        ('volunteering', 'position'),
+        ('organizations', ''),
+        ('publications', 'publication'),
+        ('awards', 'award'),
+        ('projects', 'project'),
+        ('scores', 'score'),
+    )
+    for section, section_sub_tag_class in sections:
+        tag = soup.find(
+            'section',
+            class_='profile-section',
+            id=section,
+        )
+        print_section(tag, section_sub_tag_class)
+        print_markdown_hr()
 
 
 def main():
