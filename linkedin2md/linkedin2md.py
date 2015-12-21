@@ -36,11 +36,20 @@ def get_profile_page_html(linkedin_id):
 
 
 def get_real_url(url):
-    session = dryscrape.Session()
-    session.visit(url)
-    real_url = session.url()
+    re_match_object_type = type(re.match('', ''))
+    if isinstance(url, re_match_object_type):
+        u = url.group(1)
+    else:
+        u = url
 
+    session = dryscrape.Session()
+    session.visit(u)
+    real_url = session.url()
     del session
+
+    if isinstance(url, re_match_object_type):
+        real_url = '(' + real_url + ')'
+
     return real_url
 
 
@@ -91,7 +100,7 @@ def print_profile_in_markdown(profile_page_html):
 
             return table_dict
 
-    def print_headline():
+    def print_topcard():
         name = get_tag_string('h1', class_='fn', id='name')
         print(name)
         print("")
@@ -102,6 +111,7 @@ def print_profile_in_markdown(profile_page_html):
             for d in map(str.strip, td.split('\n')):
                 if d.endswith(','):
                     d = d[:-1]
+                d = re.sub(r"\((https?://\S+)\)", get_real_url, d)
                 print("{}{}".format(markdown_indent, d))
 
     def print_tag_description(tag):
@@ -175,7 +185,7 @@ def print_profile_in_markdown(profile_page_html):
         else:
             print_tag_description(tag)
 
-    print_headline()
+    print_topcard()
     print_markdown_hr()
     sections = (
         # ('topcard', ''),
