@@ -1,3 +1,4 @@
+import re
 from argparse import ArgumentParser
 from collections import OrderedDict
 
@@ -29,8 +30,8 @@ def get_profile_page_html(linkedin_id):
         session = dryscrape.Session(base_url="https://www.linkedin.com/in/")
         session.visit(linkedin_id)
         profile_page_html = lxml.html.tostring(session.document())
-    else:
         del session
+    else:
         return profile_page_html
 
 
@@ -103,6 +104,16 @@ def print_profile_in_markdown(profile_page_html):
                     d = d[:-1]
                 print("{}{}".format(markdown_indent, d))
 
+    def print_tag_description(tag):
+        description = get_tag_string(
+            'p',
+            parent_tag=tag,
+        )
+        if description:
+            description = re.sub(r"(https?://\S+)", r"<\1>", description)
+            print("")
+            print("{}  ".format(description.replace('\n', '  \n')))
+
     def print_section(tag, sub_tag_class):
         title = get_tag_string(
             'h3',
@@ -148,13 +159,7 @@ def print_profile_in_markdown(profile_page_html):
                 if date_range:
                     print("+ {}".format(date_range))
 
-                description = get_tag_string(
-                    'p',
-                    parent_tag=item_tag,
-                )
-                if description:
-                    print("")
-                    print("{}  ".format(description.replace('\n', '  \n')))
+                print_tag_description(item_tag)
 
                 skill = get_tag_string(
                     'span',
@@ -168,13 +173,7 @@ def print_profile_in_markdown(profile_page_html):
                     print("")
 
         else:
-            description = get_tag_string(
-                'p',
-                parent_tag=tag,
-            )
-            if description:
-                print("")
-                print("{}  ".format(description.replace('\n', '  \n')))
+            print_tag_description(tag)
 
     print_headline()
     print_markdown_hr()
