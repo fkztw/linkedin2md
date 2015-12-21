@@ -1,10 +1,10 @@
 # LinkedIn2Md  
   
-Export **public** LinkedIn resume to markdown format.  
-You can use this tool to generate a Markdown format resume from your LinkedIn profile.  
+Export **public** LinkedIn profile to Markdown format.  
+You can use this tool to generate a Markdown format CV from your LinkedIn profile.  
 Edit the output Markdown file and transform it into PDF,  
-so you can have the pure text resume (maybe put it on your personal website which support markdown format)  
-and PDF resume at the same time.  
+so you can have the pure text CV (maybe put it on your personal website which support Markdown format)  
+and PDF CV at the same time.  
   
   
 ## Why create this project?  
@@ -17,9 +17,9 @@ and PDF resume at the same time.
   
 Creating a application on LinkedIn is too troublesome for me,  
 you have to fill the company name, commercial usage, ... and so on for registration.  
-This is just a toy project for my personal usage to generate a resume in markdown format because I am too lazy to write one and I don't won't to maintain lots of different versions of my resume.  I just wanna write on LinkedIn and use it anywhere.  
+This is just a toy project for my personal usage to generate a CV in Markdown format because I am too lazy to write one and I don't won't to maintain lots of different versions of my CV.  I just wanna write on LinkedIn and use it anywhere.  
 Besides, all sections of my profile are public.  
-So, that's why I get the profile from a browser and parse the html then output into markdown format.  
+So, that's why I get the profile from a browser and parse the html then output into Markdown format.  
   
 ## Why Markdown instead of reStructedText?  
   
@@ -39,7 +39,7 @@ Lots of tools can help you transform a Markdown file into a PDF.
 ```  
 usage: linkedin2md [-h] linkedin_id  
   
-Export public LinkedIn resume to markdown format  
+Export public LinkedIn profile to Markdown format  
   
 positional arguments:  
   linkedin_id  The id of the target LinkedIn profile.  

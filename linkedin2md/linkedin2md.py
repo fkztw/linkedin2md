@@ -11,7 +11,7 @@ from html2text import html2text
 def get_args():
     parser = ArgumentParser(
         prog='linkedin2md',
-        description="Export public LinkedIn resume to markdown format",
+        description="Export public LinkedIn profile to Markdown format",
     )
     parser.add_argument(
         'linkedin_id',
