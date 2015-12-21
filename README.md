@@ -50,6 +50,17 @@ optional arguments:
   
 ---  
   
+## Example  
+  
+`$ linkedin2md shunyi > profile.md`  
+You can get the user's LinkedIn profile in Markdown format like [this](docs/profile.md)  
+  
+`$ grip profile.md`  
+By using [Grip](https://github.com/joeyespo/grip) and open your browser then print the page as PDF,  
+you can get a PDF version of the profile like [this](docs/profile.pdf)  
+  
+---  
+  
 ## LICENSE  
   
 GPLv3  
