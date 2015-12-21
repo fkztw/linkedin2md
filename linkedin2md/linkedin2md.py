@@ -197,8 +197,9 @@ def print_profile_in_markdown(profile_page_html):
             class_='profile-section',
             id=section,
         )
-        print_section(tag, section_sub_tag_class)
-        print_markdown_hr()
+        if tag:
+            print_section(tag, section_sub_tag_class)
+            print_markdown_hr()
 
 
 def main():
