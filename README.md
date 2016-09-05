@@ -17,7 +17,7 @@ and PDF CV at the same time.
   
 Creating a application on LinkedIn is too troublesome for me,  
 you have to fill the company name, commercial usage, ... and so on for registration.  
-This is just a toy project for my personal usage to generate a CV in Markdown format because I am too lazy to write one and I don't won't to maintain lots of different versions of my CV.  I just wanna write on LinkedIn and use it anywhere.  
+This is just a toy project for my personal usage to generate a CV in Markdown format because I am too lazy to write one and I don't want to maintain lots of different versions of my CV.  I just wanna write on LinkedIn and use it anywhere.  
 Besides, all sections of my profile are public.  
 So, that's why I get the profile from a browser and parse the html then output into Markdown format.  
   
