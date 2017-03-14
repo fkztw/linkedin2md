@@ -1,0 +1,4 @@
+beautifulsoup4
+dryscrape
+html2text
+lxml
