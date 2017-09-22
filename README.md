@@ -1,3 +1,6 @@
+DEPRECATED  
+===  
+  
 # LinkedIn2Md  
   
 Export **public** LinkedIn profile to Markdown format.  
